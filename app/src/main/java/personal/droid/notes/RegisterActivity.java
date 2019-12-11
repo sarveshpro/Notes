@@ -27,9 +27,7 @@ import java.util.HashMap;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
     //          UI Components       //
-    private TextView mSignin;
     private EditText mName, mEmail, mPassword;
-    private Button mRegister;
     private ProgressBar mRegisterProgressBar;
     //          FireBase Vars       //
     private FirebaseAuth mFireBaseAuth;
@@ -41,8 +39,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mSignin = findViewById(R.id.tvSignIn);
-        mRegister = findViewById(R.id.btRegister);
+        TextView mSignin = findViewById(R.id.tvSignIn);
+        Button mRegister = findViewById(R.id.btRegister);
         mName = findViewById(R.id.etName);
         mEmail = findViewById(R.id.etEmail);
         mPassword = findViewById(R.id.etPassword);
