@@ -1,4 +1,4 @@
-package personal.droid.notes;
+package personal.droid.notes.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +19,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+
+import personal.droid.notes.R;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     //          UI Components       //
@@ -61,7 +63,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     mLoginProgressBar.setVisibility(View.GONE);
-                    Intent dashboardIntent = new Intent(LoginActivity.this,MainActivity.class);
+                    Intent dashboardIntent = new Intent(LoginActivity.this, HomeActivity.class);
                     dashboardIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(dashboardIntent);
                     finish();

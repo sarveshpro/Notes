@@ -1,4 +1,4 @@
-package personal.droid.notes;
+package personal.droid.notes.Activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,6 +23,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+
+import personal.droid.notes.R;
 
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
