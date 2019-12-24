@@ -1,24 +1,27 @@
-package personal.droid.notes.Activity;
+package personal.droid.notes.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseUser;
 
 import personal.droid.notes.R;
 
@@ -39,7 +42,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mLoginProgressBar = findViewById(R.id.pbLogin);
         mCreateAccountLink.setOnClickListener(this);
         mSignIn.setOnClickListener(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         mFireBaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser mFireBaseUser = mFireBaseAuth.getCurrentUser();
+        if(mFireBaseUser!=null)  {
+            finish();
+            Intent homeIntent = new Intent(LoginActivity.this,HomeActivity.class);
+            homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(homeIntent);
+
+
+        }
+
     }
 
     @Override
@@ -58,30 +77,34 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void loginUserWithTypedCredentials(String userName,String password) {
+        final View mView = findViewById(android.R.id.content);
+        InputMethodManager mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(mInputMethodManager!=null)
+        mInputMethodManager.hideSoftInputFromWindow(mUserPassword.getWindowToken(),0);
         mFireBaseAuth.signInWithEmailAndPassword(userName,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()) {
                     mLoginProgressBar.setVisibility(View.GONE);
-                    Intent dashboardIntent = new Intent(LoginActivity.this, HomeActivity.class);
-                    dashboardIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(dashboardIntent);
+                    Intent homeIntent = new Intent(LoginActivity.this, HomeActivity.class);
+                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(homeIntent);
                     finish();
                 }
                 else {
                     if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                         mLoginProgressBar.setVisibility(View.GONE);
-                        Toast.makeText(LoginActivity.this,"Invalid Credentials !",Toast.LENGTH_LONG).show();
+                        Snackbar.make(mView,"Invalid Credentials !",Snackbar.LENGTH_LONG).show();
 
                     }
                     else if (task.getException() instanceof FirebaseAuthInvalidUserException) {
                         mLoginProgressBar.setVisibility(View.GONE);
-                        Toast.makeText(LoginActivity.this,"Please Create an Account !",Toast.LENGTH_LONG).show();
+                        Snackbar.make(mView,"Please Create an Account !",Snackbar.LENGTH_LONG).show();
                     }
                     else {
                         mLoginProgressBar.setVisibility(View.GONE);
-                        Toast.makeText(LoginActivity.this,"Error Occurred ! Please Try Again",Toast.LENGTH_LONG).show();
-                    }
+                        Snackbar.make(mView,"Error Occurred ! Please Try Again",Snackbar.LENGTH_LONG).show();
+                      }
                 }
             }
         });
