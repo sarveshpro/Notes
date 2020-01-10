@@ -1,12 +1,14 @@
-package personal.droid.notes;
+package personal.droid.notes.activity;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -15,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
@@ -24,12 +27,12 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 
+import personal.droid.notes.R;
+
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
     //          UI Components       //
-    private TextView mSignin;
     private EditText mName, mEmail, mPassword;
-    private Button mRegister;
     private ProgressBar mRegisterProgressBar;
     //          FireBase Vars       //
     private FirebaseAuth mFireBaseAuth;
@@ -41,13 +44,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        mSignin = findViewById(R.id.tvSignIn);
-        mRegister = findViewById(R.id.btRegister);
+        TextView mSignIn = findViewById(R.id.tvSignIn);
+        Button mRegister = findViewById(R.id.btRegister);
         mName = findViewById(R.id.etName);
         mEmail = findViewById(R.id.etEmail);
         mPassword = findViewById(R.id.etPassword);
         mRegisterProgressBar = findViewById(R.id.pbRegister);
-        mSignin.setOnClickListener(this);
+        mSignIn.setOnClickListener(this);
         mRegister.setOnClickListener(this);
         mFireBaseAuth = FirebaseAuth.getInstance();
 
@@ -72,6 +75,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     private void getUserRegistered(final String name, final String email, String password) {
+        final View mView = findViewById(android.R.id.content);
+        InputMethodManager mInputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (mInputMethodManager!=null)
+        mInputMethodManager.hideSoftInputFromWindow(mPassword.getWindowToken(),0);
         mFireBaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -90,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                         if (task.isSuccessful()) {
                                             mFireBaseAuth.signOut();
                                             mRegisterProgressBar.setVisibility(ProgressBar.INVISIBLE);
-                                            Toast.makeText(RegisterActivity.this,"User Added Successfully !",Toast.LENGTH_SHORT).show();
+                                            Snackbar.make(mView,name + ",your account has been created successfully",Snackbar.LENGTH_SHORT).show();
                                             Intent loginIntent = new Intent(RegisterActivity.this,
                                                     LoginActivity.class);
                                             loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
@@ -101,8 +108,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
                                         } else {
                                             mRegisterProgressBar.setVisibility(ProgressBar.INVISIBLE);
-                                            Toast.makeText(RegisterActivity.this,"Error in Creating Account", Toast.LENGTH_LONG).show();
-                                            Log.d(TAG, "Error in Creating Account " + task.getException());
+                                            Snackbar.make(mView,name + ",there was a error while creating account",Snackbar.LENGTH_LONG).show();
+                                            Log.e(TAG, "Error in Creating Account " + task.getException());
                                         }
 
                                     }
