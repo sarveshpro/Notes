@@ -1,18 +1,19 @@
-package personal.droid.notes.activity;
+package social.droid.notes.activities;
+
+import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.os.Bundle;
-import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import personal.droid.notes.R;
-import personal.droid.notes.fragments.AccountFragment;
-import personal.droid.notes.fragments.HomeFragment;
-import personal.droid.notes.fragments.SelectNoteFragment;
+import social.droid.notes.R;
+import social.droid.notes.fragments.AccountFragment;
+import social.droid.notes.fragments.HomeFragment;
+import social.droid.notes.fragments.SelectNoteFragment;
 
 public class HomeActivity extends AppCompatActivity {
 
