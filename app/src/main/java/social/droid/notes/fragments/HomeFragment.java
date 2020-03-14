@@ -79,34 +79,12 @@ public class HomeFragment extends Fragment implements OnFolderClickListener, OnN
                 }
                 HomeFragment.this.removeCurrentNode();
                 HomeFragment homeFragment = HomeFragment.this;
-                homeFragment.populateNote(homeFragment.path);
+                homeFragment.populateNoteCategory(homeFragment.path);
                 return true;
             }
         });
         return this.mView;
     }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        Log.d(TAG, "onSaveInstanceState: is called");
-        outState.putParcelableArrayList("notes",mNotesArrayList);
-        super.onSaveInstanceState(outState);
-    }
-
-
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        try {
-            mNotesArrayList = savedInstanceState.getParcelableArrayList("notes");
-
-        }catch (Exception e) {
-            System.out.println("onsavedInstanceState problem");
-            e.printStackTrace();
-        }
-        }
-
 
     private void removeCurrentNode() {
         StringBuffer mPath = new StringBuffer();
@@ -115,72 +93,20 @@ public class HomeFragment extends Fragment implements OnFolderClickListener, OnN
         Log.d(TAG, "removeCurrentNode: " + this.path);
     }
 
-    private void getNotes(String noteDetail) {
-        mFireBaseDatabaseReference = FirebaseDatabase.getInstance().getReference(noteDetail);
-        mFireBaseDatabaseReference.addValueEventListener(new ValueEventListener() {
-
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d(HomeFragment.TAG, "onDataChange: " + dataSnapshot);
-                HomeFragment.this.mNotesArrayList.add(dataSnapshot.getValue(Note.class));
-                HomeFragment.this.mNotesRecyclerViewAdapter.notifyDataSetChanged();
-            }
-
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
-
     private void getDetailNotes(String notes) {
-        this.mFireBaseDatabaseReference = this.mFireBaseDatabaseReference.child(notes);
-        this.mFireBaseDatabaseReference.addChildEventListener(new ChildEventListener() {
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
-                Log.d(HomeFragment.TAG, "geDetailNotes: " + dataSnapshot.getKey());
-                HomeFragment.this.mNotesArrayList.add(new Note(dataSnapshot.getKey(), "null"));
-                HomeFragment.this.mNotesRecyclerViewAdapter.notifyDataSetChanged();
+        this.mFireBaseDatabaseReference = FirebaseDatabase.getInstance().getReference(notes);
+        this.mFireBaseDatabaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot mDataSnapshot : dataSnapshot.getChildren()) {
+                    mNotesArrayList.add(mDataSnapshot.getValue(Note.class));
+                    mNotesRecyclerViewAdapter.notifyDataSetChanged();
+                }
             }
 
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
-                Log.d(HomeFragment.TAG, "geDetailNotes: " + dataSnapshot.getKey());
-                HomeFragment.this.mNotesArrayList.add(new Note(dataSnapshot.getKey(), "null"));
-                HomeFragment.this.mNotesRecyclerViewAdapter.notifyDataSetChanged();
-
-            }
-
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
-            }
-
+            @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
-    }
 
-    private void populateNoteName(String subject) {
-        Log.d(TAG, "populateNoteName: "+ subject);
-        mFireBaseDatabaseReference = FirebaseDatabase.getInstance().getReference(subject);
-        Log.d(TAG, "Database Reference: " + mFireBaseDatabaseReference);
-        mFireBaseDatabaseReference.addChildEventListener(new ChildEventListener() {
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String s) {
-                Log.d(HomeFragment.TAG, "populateNoteName: " + dataSnapshot.getKey());
-                HomeFragment.this.mNotesArrayList.add(new Note(dataSnapshot.getKey(), "null"));
-                HomeFragment.this.mNotesRecyclerViewAdapter.notifyDataSetChanged();
-            }
-
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, String s) {
-                Log.d(HomeFragment.TAG, "populateNoteName: " + dataSnapshot.getKey());
-                HomeFragment.this.mNotesArrayList.add(new Note(dataSnapshot.getKey(), "null"));
-                HomeFragment.this.mNotesRecyclerViewAdapter.notifyDataSetChanged();
-            }
-
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-            }
-
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, String s) {
-            }
-
-            public void onCancelled(@NonNull DatabaseError databaseError) {
             }
         });
     }
@@ -211,7 +137,7 @@ public class HomeFragment extends Fragment implements OnFolderClickListener, OnN
         });
     }
 
-    private void populateNote(String subject) {
+    private void populateNoteCategory(String subject) {
         Log.d(TAG, "Path Accessed : " + subject);
         mFireBaseDatabaseReference = FirebaseDatabase.getInstance().getReference(subject);
         Log.d(TAG, "populateNote: "+ mFireBaseDatabaseReference);
@@ -242,14 +168,12 @@ public class HomeFragment extends Fragment implements OnFolderClickListener, OnN
         mNotesArrayList.clear();
         Log.d(TAG, "onFolderClick: "+ path);
         if(path.contains("Assignments") | path.contains("Experiments") | path.contains("Others")) {
-            Log.d(TAG, "onFolderClick: calling getDetailsNotes method");
             mNoteRecyclerView.setAdapter(this.mNotesRecyclerViewAdapter);
             mNoteRecyclerView.setLayoutManager(this.mNoteRecyclerViewLayoutManager);
-            getNotes(path);
-
+            getDetailNotes(path);
         }
         else {
-            populateNote(path);
+            populateNoteCategory(path);
         }
     }
 

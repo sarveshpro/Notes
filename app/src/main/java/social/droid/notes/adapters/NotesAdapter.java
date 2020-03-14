@@ -22,9 +22,9 @@ public class NotesAdapter extends Adapter<NotesAdapter.ViewHolder> {
     private ArrayList<Note> mNoteArrayList;
     private OnNoteClickListener onNoteClickListener;
 
-    public NotesAdapter(ArrayList<Note> mNoteArrayList2, OnNoteClickListener onNoteClickListener2) {
+    public NotesAdapter(ArrayList<Note> mNoteArrayList2, OnNoteClickListener onNoteClickListener) {
         this.mNoteArrayList = mNoteArrayList2;
-        this.onNoteClickListener = onNoteClickListener2;
+        this.onNoteClickListener = onNoteClickListener;
     }
 
     public @NonNull
