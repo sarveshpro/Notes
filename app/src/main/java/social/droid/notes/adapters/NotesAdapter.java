@@ -50,9 +50,9 @@ public class NotesAdapter extends Adapter<NotesAdapter.ViewHolder> {
         RelativeLayout mNoteRelativeLayout;
         OnNoteClickListener onNoteClickListener;
 
-        public ViewHolder(View itemView, OnNoteClickListener onNoteClickListener2) {
+        public ViewHolder(View itemView, OnNoteClickListener onNoteClickListener) {
             super(itemView);
-            this.onNoteClickListener = onNoteClickListener2;
+            this.onNoteClickListener = onNoteClickListener;
             this.mNoteRelativeLayout = itemView.findViewById(R.id.layout_notes);
             this.mNoteImageView = itemView.findViewById(R.id.ivNote);
             this.mNoteName = itemView.findViewById(R.id.tvNoteName);

@@ -20,9 +20,9 @@ public class FolderAdapter extends Adapter<FolderAdapter.ViewHolder> {
     private ArrayList<Note> mFolderArrayList;
     private OnFolderClickListener onFolderClickListener;
 
-    public FolderAdapter(ArrayList<Note> mFolderArrayList2, OnFolderClickListener onFolderClickListener2) {
-        this.mFolderArrayList = mFolderArrayList2;
-        this.onFolderClickListener = onFolderClickListener2;
+    public FolderAdapter(ArrayList<Note> mFolderArrayList, OnFolderClickListener onFolderClickListener) {
+        this.mFolderArrayList = mFolderArrayList;
+        this.onFolderClickListener = onFolderClickListener;
     }
 
     public @NonNull

@@ -16,6 +16,7 @@ import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,6 +37,8 @@ import java.util.Objects;
 import social.droid.notes.R;
 import social.droid.notes.utils.Note;
 
+import static social.droid.notes.utils.FragmentHelper.setFragment;
+
 public class UploadNoteFragment extends Fragment {
     private ArrayList<String> mNoteCategoryArrayList;
     private Spinner mNoteCategorySpinner;
@@ -43,6 +46,7 @@ public class UploadNoteFragment extends Fragment {
     private ArrayList<String> mSubjectArrayList;
     private Spinner mSubjectSpinner;
     private View mView;
+    private FragmentManager mFragmentManager;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         this.mView = inflater.inflate(R.layout.fragment_upload_note, container, false);
@@ -56,6 +60,7 @@ public class UploadNoteFragment extends Fragment {
         setupSubjectArrayAdapter(mContext);
         this.mNoteCategoryArrayList = new ArrayList<>();
         setupNoteCategoryArrayAdapter(mContext);
+        mFragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         mUploadNote.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 if (UploadNoteFragment.this.mSubjectSpinner.getSelectedItemPosition() == 0) {
@@ -94,7 +99,7 @@ public class UploadNoteFragment extends Fragment {
                 mFireBaseDatabaseReference.setValue(mUploadNotePDF);
                 mNoteUploadProgressBar.setVisibility(View.GONE);
                 HomeFragment mHomeFragment = new HomeFragment();
-                setFragment(mHomeFragment);
+                setFragment(mHomeFragment,mFragmentManager);
                 BottomNavigationView mBottomNavigationView = Objects.requireNonNull(getActivity()).findViewById(R.id.nav_main);
                 mBottomNavigationView.setSelectedItemId(R.id.nav_home);
             }
@@ -112,12 +117,6 @@ public class UploadNoteFragment extends Fragment {
             }
         });
 
-    }
-
-    private void setFragment(Fragment fragment) {
-        FragmentTransaction mFragmentTransaction = (Objects.requireNonNull(getActivity())).getSupportFragmentManager().beginTransaction();
-        mFragmentTransaction.replace(R.id.frame_main, fragment);
-        mFragmentTransaction.commit();
     }
 
     private boolean isEmpty(EditText editText) {

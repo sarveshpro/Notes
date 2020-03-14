@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import social.droid.notes.R;
 
 import static android.app.Activity.RESULT_OK;
+import static social.droid.notes.utils.FragmentHelper.setFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +32,7 @@ public class SelectNoteFragment extends Fragment {
     private final int CHOOSE_PDF_REQUEST_CODE = 101;
     //          UI Vars         //
     private View mView;
+    private FragmentManager mFragmentManager;
     public SelectNoteFragment() {
         // Required empty public constructor
     }
@@ -41,6 +44,7 @@ public class SelectNoteFragment extends Fragment {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_select_note, container, false);
         Button mSelectNote = mView.findViewById(R.id.btSelectNote);
+        mFragmentManager = Objects.requireNonNull(getActivity()).getSupportFragmentManager();
         mSelectNote.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,18 +69,12 @@ public class SelectNoteFragment extends Fragment {
         }
     }
 
-    private void setFragment(Fragment fragment) {
-
-        FragmentTransaction mFragmentTransaction = Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction();
-        mFragmentTransaction.replace(R.id.frame_main,fragment);
-        mFragmentTransaction.commit();
-    }
 
     private void sendNoteToUpload(Uri uri) {
         UploadNoteFragment mUploadNoteFragment = new UploadNoteFragment();
         Bundle mBundle = new Bundle();
         mBundle.putString("NoteUri",uri.toString());
         mUploadNoteFragment.setArguments(mBundle);
-        setFragment(mUploadNoteFragment);
+        setFragment(mUploadNoteFragment,mFragmentManager);
     }
 }
